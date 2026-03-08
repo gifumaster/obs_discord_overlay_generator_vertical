@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Discord Streamkit Overlay CSSジェネレーター</title>
+  <link rel="stylesheet" href="./styles.css?v=20260308-vertical-1">
+</head>
+<body>
+  <main class="app-shell">
+    <div class="left-column">
+      <section class="panel settings-panel">
+        <div class="panel-header">
+        <div>
+          <p class="eyebrow">Discord Streamkit Overlay</p>
+        </div>
+          <div class="settings-toolbar-actions">
+            <button id="open-help" class="ghost compact-action" type="button">使い方</button>
+            <label class="ghost file-action compact-action">
+              <span>JSON読込</span>
+              <input id="load-json" type="file" accept="application/json">
+            </label>
+            <button id="save-json" class="ghost compact-action" type="button">JSON保存</button>
+          </div>
+        </div>
+
+        <div class="settings-toolbar">
+          <div class="tab-bar" role="tablist" aria-label="設定タブ">
+            <button id="tab-shared" class="tab-button is-active" type="button" role="tab" aria-selected="true" aria-controls="panel-shared">共有設定</button>
+            <button id="tab-users" class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="panel-users">ユーザー設定</button>
+          </div>
+        </div>
+
+        <p id="copy-status" class="copy-status is-empty" aria-live="polite"></p>
+
+        <section id="panel-shared" class="tab-panel is-active" role="tabpanel" aria-labelledby="tab-shared">
+          <form id="shared-form" class="form-grid">
+          <label>
+            <span>サイズプリセット</span>
+            <select id="shared-size-preset" name="sharedSizePreset">
+              <option value="compact">コンパクト</option>
+              <option value="balanced" selected>バランス</option>
+              <option value="focus">フォーカス</option>
+              <option value="tall">トール</option>
+              <option value="custom">カスタム</option>
+            </select>
+          </label>
+
+          <label>
+            <span>形状プリセット</span>
+            <select id="shape-preset" name="shapePreset">
+              <option value="gentle">ゆるめ</option>
+              <option value="balanced" selected>標準</option>
+              <option value="sharp">強め</option>
+              <option value="reverse">逆傾き</option>
+              <option value="custom">カスタム</option>
+            </select>
+          </label>
+
+          <label>
+            <span>表示幅 (px)</span>
+            <input id="shared-display-width" name="sharedDisplayWidth" type="number" min="1" step="1" value="320">
+          </label>
+
+          <label>
+            <span>表示高さ (px)</span>
+            <input id="shared-display-height" name="sharedDisplayHeight" type="number" min="1" step="1" value="80">
+          </label>
+
+          <label>
+            <span>並び間隔 (px)</span>
+            <input id="stack-gap" name="stackGap" type="number" min="0" step="1" value="26">
+          </label>
+
+          <div class="full toggle-row">
+            <label class="toggle">
+              <input id="enable-glow" name="enableGlow" type="checkbox" checked>
+              <span>発話時にグロー</span>
+            </label>
+            <label class="toggle">
+              <input id="enable-bobbing" name="enableBobbing" type="checkbox" checked>
+              <span>発話時に上下モーション</span>
+            </label>
+          </div>
+
+          <details id="shared-advanced-panel" class="full advanced-panel">
+            <summary>詳細設定</summary>
+            <div class="advanced-grid">
+              <div class="full advanced-section-label">レイアウト微調整</div>
+
+              <label>
+                <span>上余白 (px)</span>
+                <input id="stack-padding-top" name="stackPaddingTop" type="number" min="0" step="1" value="20">
+              </label>
+
+              <label>
+                <span>下余白 (px)</span>
+                <input id="stack-padding-bottom" name="stackPaddingBottom" type="number" min="0" step="1" value="28">
+              </label>
+
+              <label>
+                <span>左余白 (px)</span>
+                <input id="stack-padding-left" name="stackPaddingLeft" type="number" min="0" step="1" value="18">
+              </label>
+
+              <label>
+                <span>ラベル間隔 (px)</span>
+                <input id="label-gap" name="labelGap" type="number" min="0" step="1" value="16">
+              </label>
+
+              <label>
+                <span>最小高さ (px)</span>
+                <input id="min-height" name="minHeight" type="number" min="1" step="1" value="280">
+              </label>
+
+              <div class="full advanced-divider" aria-hidden="true"></div>
+              <div class="full advanced-section-label">セレクタ</div>
+
+              <label>
+                <span>コンテナセレクタ</span>
+                <input id="container-selector" name="containerSelector" type="text" value=".voice_states" spellcheck="false">
+              </label>
+
+              <label>
+                <span>発話中クラス名</span>
+                <input id="speaking-class" name="speakingClass" type="text" value="wrapper_speaking" spellcheck="false">
+              </label>
+
+              <label>
+                <span>Z-index 基準値</span>
+                <input id="z-index-base" name="zIndexBase" type="number" step="1" value="10">
+              </label>
+
+              <label>
+                <span>画像読込時の最大幅 (px)</span>
+                <input id="resize-max-width" name="resizeMaxWidth" type="number" min="1" step="1" value="336">
+              </label>
+
+              <label>
+                <span>画像読込時の最大高さ (px)</span>
+                <input id="resize-max-height" name="resizeMaxHeight" type="number" min="1" step="1" value="540">
+              </label>
+
+              <div class="full advanced-divider" aria-hidden="true"></div>
+              <div class="full advanced-section-label">枠の形状</div>
+
+              <label>
+                <span>左上 X (%)</span>
+                <input id="clip-left-top" name="clipLeftTop" type="number" min="0" max="100" step="1" value="8">
+              </label>
+
+              <label>
+                <span>右上 X (%)</span>
+                <input id="clip-right-top" name="clipRightTop" type="number" min="0" max="100" step="1" value="100">
+              </label>
+
+              <label>
+                <span>右下 X (%)</span>
+                <input id="clip-right-bottom" name="clipRightBottom" type="number" min="0" max="100" step="1" value="92">
+              </label>
+
+              <label>
+                <span>左下 X (%)</span>
+                <input id="clip-left-bottom" name="clipLeftBottom" type="number" min="0" max="100" step="1" value="0">
+              </label>
+
+              <div class="full advanced-divider" aria-hidden="true"></div>
+              <div class="full advanced-section-label">フレームと発話演出</div>
+
+              <label>
+                <span>フレーム色</span>
+                <input id="frame-color" name="frameColor" type="color" value="#f8fafc">
+              </label>
+
+              <label>
+                <span>グロー色</span>
+                <input id="frame-glow-color" name="frameGlowColor" type="color" value="#7dd3fc">
+              </label>
+
+              <label>
+                <span>フレーム線幅 (px)</span>
+                <input id="frame-stroke-width" name="frameStrokeWidth" type="number" min="0" step="0.5" value="2">
+              </label>
+
+              <label>
+                <span>グロー強度</span>
+                <input id="frame-glow-strength" name="frameGlowStrength" type="number" min="0.2" max="3" step="0.1" value="1.1">
+              </label>
+
+              <label>
+                <span>発話フィルター強度</span>
+                <input id="speaking-filter-strength" name="speakingFilterStrength" type="number" min="0" max="2" step="0.1" value="0.7">
+              </label>
+
+              <label>
+                <span>上下移動量 (px)</span>
+                <input id="bob-distance" name="bobDistance" type="number" min="0" step="1" value="5">
+              </label>
+
+              <label>
+                <span>アニメーション秒数</span>
+                <input id="bob-duration" name="bobDuration" type="number" min="0.1" step="0.1" value="0.7">
+              </label>
+            </div>
+          </details>
+          </form>
+        </section>
+
+        <section id="panel-users" class="tab-panel" role="tabpanel" aria-labelledby="tab-users" hidden>
+          <div class="panel-header users-header">
+            <div>
+              <p class="eyebrow">Users</p>
+              <h2>ユーザー設定</h2>
+            </div>
+            <button id="add-user" class="ghost" type="button">ユーザー追加</button>
+          </div>
+          <div id="user-tab-bar" class="user-tab-bar" role="tablist" aria-label="ユーザータブ"></div>
+          <p id="user-empty-state" class="user-empty-state" hidden>ユーザーがまだありません。「ユーザー追加」から始めてください。</p>
+          <div id="user-list" class="user-list single-user"></div>
+        </section>
+      </section>
+
+      <section class="panel output-panel">
+        <div class="panel-header output-header">
+          <div>
+            <p class="eyebrow">Generated</p>
+          </div>
+          <button id="copy-css" class="ghost primary" type="button">CSSをコピー</button>
+        </div>
+        <textarea id="css-output" class="css-output" rows="12" readonly></textarea>
+      </section>
+    </div>
+
+    <section class="panel preview-panel">
+      <div class="panel-header">
+        <div>
+          <p class="eyebrow">Preview</p>
+        </div>
+      </div>
+      <div class="preview-stage">
+        <div id="preview-canvas" class="preview-canvas"></div>
+        <p id="preview-empty-state" class="preview-empty-state" hidden>プレビュー対象のユーザーがありません。</p>
+      </div>
+    </section>
+  </main>
+
+  <div id="resume-modal" class="resume-modal" hidden>
+    <div class="resume-dialog" role="dialog" aria-modal="true" aria-labelledby="resume-title">
+      <p class="eyebrow">ローカル下書き</p>
+      <h2 id="resume-title">前回の下書きを再開しますか？</h2>
+      <p id="resume-description" class="resume-copy">保存済みのローカル下書きがあります。</p>
+      <div class="resume-actions">
+        <button id="resume-previous" class="ghost primary" type="button">再開する</button>
+        <button id="resume-new" class="ghost" type="button">新しく始める</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="help-modal" class="resume-modal" hidden>
+    <div class="resume-dialog help-dialog" role="dialog" aria-modal="true" aria-labelledby="help-title">
+      <div class="help-header">
+        <div>
+          <p class="eyebrow">使い方</p>
+          <h2 id="help-title">最短手順</h2>
+        </div>
+        <button id="close-help" class="ghost compact-action" type="button">閉じる</button>
+      </div>
+      <ol class="help-list">
+        <li>共有設定で表示サイズ、間隔、余白、発話演出を決めます。</li>
+        <li>ユーザー設定でラベル、Discord User ID、表示オフセットを入力します。</li>
+        <li>画像ファイル読込または画像貼り付けでアバターを入れ、必要ならトリミングします。</li>
+        <li>発話プレビューを切り替えて、見え方を確認します。</li>
+        <li>生成CSSをコピーして OBS の Discord Streamkit Overlay に貼り付けます。</li>
+      </ol>
+      <p class="help-note">JSON保存/読込とローカル下書き再開に対応しています。作業途中の設定も維持できます。</p>
+    </div>
+  </div>
+
+  <div id="cropper-modal" class="resume-modal cropper-modal" hidden>
+    <div class="cropper-dialog" role="dialog" aria-modal="true" aria-labelledby="cropper-title">
+      <div class="cropper-header">
+        <div>
+          <p class="eyebrow">画像トリミング</p>
+          <h2 id="cropper-title">表示比率に合わせて切り抜く</h2>
+          <p id="cropper-source-badge" class="cropper-source-badge">オリジナル画像</p>
+        </div>
+        <button id="cropper-close" class="ghost compact-action" type="button">閉じる</button>
+      </div>
+      <p class="cropper-copy">ドラッグで位置を調整し、スライダーで拡大してください。</p>
+      <div id="cropper-viewport" class="cropper-viewport">
+        <img id="cropper-image" class="cropper-image" alt="" draggable="false">
+        <div id="cropper-selection" class="cropper-selection" aria-hidden="true"></div>
+      </div>
+      <div class="cropper-controls">
+        <label class="cropper-zoom">
+          <span>拡大率</span>
+          <input id="cropper-zoom" type="range" min="1" max="4" step="0.01" value="1">
+        </label>
+      </div>
+      <div class="resume-actions">
+        <button id="cropper-cancel" class="ghost" type="button">キャンセル</button>
+        <button id="cropper-apply" class="ghost primary" type="button">適用</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-meta app-meta-left">v20260308-vertical-1</div>
+  <a class="app-meta app-meta-right" href="https://streamkit.discord.com/overlay" target="_blank" rel="noreferrer noopener">Discord Streamkit Overlay</a>
+
+  <template id="user-row-template">
+    <article class="user-card">
+      <div class="user-card-header">
+        <strong class="user-card-title">ユーザー</strong>
+        <div class="user-card-actions">
+          <button class="ghost move-user-up" type="button" aria-label="ユーザーを上へ移動">↑</button>
+          <button class="ghost move-user-down" type="button" aria-label="ユーザーを下へ移動">↓</button>
+          <label class="toggle compact-toggle">
+            <input class="is-speaking" type="checkbox">
+            <span>発話プレビュー</span>
+          </label>
+          <button class="danger remove-user" type="button">削除</button>
+        </div>
+      </div>
+
+      <div class="user-grid">
+        <label>
+          <span>ラベル</span>
+          <input class="user-label" type="text" value="ユーザー 1" spellcheck="false">
+        </label>
+
+        <label>
+          <span>
+            Discord User ID
+            <a
+              class="field-help-link"
+              href="https://support.discord.com/hc/ja/articles/206346498-%E3%83%A6%E3%83%BC%E3%82%B6%E3%83%BC-%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC-%E3%83%A1%E3%83%83%E3%82%BB%E3%83%BC%E3%82%B8ID%E3%81%AF%E3%81%A9%E3%81%93%E3%81%A7%E8%A6%8B%E3%81%A4%E3%81%91%E3%82%89%E3%82%8C%E3%82%8B"
+              target="_blank"
+              rel="noreferrer noopener"
+            >
+              調べ方
+            </a>
+          </span>
+          <input class="user-id" type="text" placeholder="123456789012345678" spellcheck="false">
+        </label>
+
+        <label>
+          <span>表示オフセット (px)</span>
+          <input class="axis-offset" type="number" step="1" value="0">
+        </label>
+
+        <label class="full visually-hidden">
+          <span>画像 Data URL</span>
+          <textarea class="data-url" rows="4" placeholder="data:image/png;base64,..."></textarea>
+        </label>
+
+        <div class="full file-row">
+          <label class="file-picker">
+            <span>画像ファイル読込 / 画像貼り付け</span>
+            <input class="image-file" type="file" accept="image/*">
+          </label>
+          <button class="ghost crop-user-image" type="button">トリミング</button>
+        </div>
+      </div>
+    </article>
+  </template>
+
+  <script src="./css-generator.js?v=20260308-vertical-1"></script>
+  <script src="./state-io.js?v=20260308-vertical-1"></script>
+  <script src="./preview.js?v=20260308-vertical-1"></script>
+  <script src="./user-editor.js?v=20260308-vertical-1"></script>
+  <script src="./shared-settings.js?v=20260308-vertical-1"></script>
+  <script src="./image-cropper.js?v=20260308-vertical-1"></script>
+  <script src="./app.js?v=20260308-vertical-1"></script>
+</body>
+</html>
