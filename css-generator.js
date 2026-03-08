@@ -117,7 +117,17 @@ window.VerticalOverlayCssGenerator = (() => {
       stackNumber: index + 1,
       top: rawTops[index] + topShift,
       left: sharedSettings.stackPaddingLeft
-    }));
+    })).map((user, index, positioned) => {
+      const previousUser = positioned[index - 1];
+      const flowMarginTop = index === 0
+        ? user.top
+        : user.top - (previousUser.top + sharedSettings.sharedDisplayHeight);
+
+      return {
+        ...user,
+        flowMarginTop
+      };
+    });
 
     const contentBottom = positionedUsers.reduce((currentMax, user) => (
       Math.max(currentMax, user.top + sharedSettings.sharedDisplayHeight)
@@ -173,12 +183,11 @@ window.VerticalOverlayCssGenerator = (() => {
     const itemWidth = sharedSettings.sharedDisplayWidth + sharedSettings.labelGap + labelWidth;
 
     return `li[data-userid="${userId}"] {
-  position: absolute;
-  left: ${user.left}px;
-  top: ${user.top}px;
+  position: relative;
+  order: ${user.stackNumber};
   width: ${itemWidth}px;
   min-height: ${sharedSettings.sharedDisplayHeight}px;
-  margin: 0 !important;
+  margin: ${user.flowMarginTop}px 0 0 0 !important;
   padding: 0 !important;
   display: block !important;
   overflow: visible !important;
@@ -269,6 +278,9 @@ ${buildSpeakingFrameBlock(sharedSettings)}
       speakingClass: String(sharedSettings.speakingClass || "wrapper_speaking").replace(/[^a-zA-Z0-9_-]/g, "") || "wrapper_speaking"
     };
     const layout = buildLayoutMetrics(safeSettings, users);
+    const allowedUserSelectorSuffix = layout.enabledUsers
+      .map((user) => `:not([data-userid="${sanitizeSelectorValue(user.userId, "USER_ID_HERE")}"])`)
+      .join("");
     const userCssBlocks = layout.enabledUsers
       .map((user) => buildUserCss(safeSettings, user, layout.labelWidth, sampleImageDataUrl))
       .join("\n\n");
@@ -288,12 +300,20 @@ ${buildSpeakingFrameBlock(sharedSettings)}
 
     return `${safeSettings.containerSelector} {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   min-height: ${layout.totalHeight}px;
+  padding: 0 0 ${safeSettings.stackPaddingBottom}px ${safeSettings.stackPaddingLeft}px;
   overflow: visible !important;
 }
 
 ${safeSettings.containerSelector} li {
   list-style: none;
+}
+
+${safeSettings.containerSelector} > li${allowedUserSelectorSuffix} {
+  display: none !important;
 }
 
 ${userCssBlocks}${bobKeyframes}
