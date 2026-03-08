@@ -377,6 +377,12 @@ function renderPreview() {
     buildSpeakingFilterValue,
     clampNumber,
     hexToRgba,
+    onSelectUser: (userInternalId) => {
+      activeUserId = userInternalId;
+      setActiveTab("users");
+      renderUserTabs();
+      renderActiveUserEditor();
+    },
     previewCanvas,
     previewEmptyState,
     sampleImageDataUrl: SAMPLE_IMAGE_DATA_URL,

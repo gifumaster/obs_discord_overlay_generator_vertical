@@ -26,6 +26,8 @@ window.VerticalOverlayPreview = (() => {
     const label = document.createElement("div");
 
     card.className = "preview-card";
+    card.tabIndex = 0;
+    card.setAttribute("role", "button");
     avatar.className = "preview-avatar";
     frame.className = "preview-frame";
     label.className = "preview-label";
@@ -43,6 +45,7 @@ window.VerticalOverlayPreview = (() => {
     buildSpeakingFilterValue,
     clampNumber,
     hexToRgba,
+    onSelectUser,
     previewCanvas,
     previewEmptyState,
     sampleImageDataUrl,
@@ -84,6 +87,18 @@ window.VerticalOverlayPreview = (() => {
 
       card.classList.toggle("is-speaking", user.speaking);
       card.classList.toggle("is-bobbing", false);
+      card.setAttribute("aria-label", `${user.label || user.userId || "ユーザー"} を編集`);
+      card.onclick = () => {
+        onSelectUser?.(user.internalId);
+      };
+      card.onkeydown = (event) => {
+        if (event.key !== "Enter" && event.key !== " ") {
+          return;
+        }
+
+        event.preventDefault();
+        onSelectUser?.(user.internalId);
+      };
       avatar.classList.toggle("is-bobbing", user.speaking && sharedSettings.enableBobbing);
       card.style.left = `${user.left}px`;
       card.style.top = `${user.top}px`;
