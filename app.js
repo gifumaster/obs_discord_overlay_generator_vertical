@@ -42,6 +42,7 @@ const speakingClassField = document.querySelector("#speaking-class");
 const zIndexBaseField = document.querySelector("#z-index-base");
 const resizeMaxWidthField = document.querySelector("#resize-max-width");
 const resizeMaxHeightField = document.querySelector("#resize-max-height");
+const displayImageScaleField = document.querySelector("#display-image-scale");
 const frameColorField = document.querySelector("#frame-color");
 const frameGlowColorField = document.querySelector("#frame-glow-color");
 const frameStrokeWidthField = document.querySelector("#frame-stroke-width");
@@ -120,7 +121,6 @@ const SAMPLE_IMAGE_DATA_URL = `data:image/svg+xml;utf8,${encodeURIComponent(`
   <path d="M212 14h54L182 70h-42z" fill="#ffffff" opacity="0.1"/>
 </svg>
 `)}`;
-
 let nextUserNumber = 1;
 let usersState = [];
 let activeUserId = null;
@@ -219,6 +219,7 @@ function readSharedSettings() {
     labelGapField,
     minHeightField,
     normalizeHexColor,
+    displayImageScaleField,
     resizeMaxHeightField,
     resizeMaxWidthField,
     sharedAdvancedPanel,
@@ -255,6 +256,7 @@ function setSharedSettings(sharedSettings) {
     labelGapField,
     minHeightField,
     normalizeHexColor,
+    displayImageScaleField,
     resizeMaxHeightField,
     resizeMaxWidthField,
     sharedAdvancedPanel,
@@ -475,6 +477,8 @@ function resizeImageToDataUrl(sourceDataUrl, maxWidth, maxHeight, mimeType = "im
 
       canvas.width = targetWidth;
       canvas.height = targetHeight;
+      context.imageSmoothingEnabled = true;
+      context.imageSmoothingQuality = "high";
       context.drawImage(image, 0, 0, targetWidth, targetHeight);
       resolve(canvas.toDataURL(mimeType, quality));
     };
@@ -486,10 +490,19 @@ function resizeImageToDataUrl(sourceDataUrl, maxWidth, maxHeight, mimeType = "im
 
 async function buildDisplayImageDataUrl(sourceDataUrl) {
   const sharedSettings = readSharedSettings();
+  const preferredWidth = Math.max(
+    sharedSettings.resizeMaxWidth,
+    Math.round(sharedSettings.sharedDisplayWidth * sharedSettings.displayImageScale)
+  );
+  const preferredHeight = Math.max(
+    sharedSettings.resizeMaxHeight,
+    Math.round(sharedSettings.sharedDisplayHeight * sharedSettings.displayImageScale)
+  );
+
   return resizeImageToDataUrl(
     sourceDataUrl,
-    sharedSettings.resizeMaxWidth,
-    sharedSettings.resizeMaxHeight,
+    preferredWidth,
+    preferredHeight,
     "image/png"
   );
 }

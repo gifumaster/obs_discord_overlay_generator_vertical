@@ -73,6 +73,7 @@ window.VerticalOverlaySharedSettings = (() => {
     const zIndexBase = Number(deps.zIndexBaseField.value);
     const resizeMaxWidth = Number(deps.resizeMaxWidthField.value);
     const resizeMaxHeight = Number(deps.resizeMaxHeightField.value);
+    const displayImageScale = Number(deps.displayImageScaleField.value);
     const bobDistance = Number(deps.bobDistanceField.value);
     const bobDuration = Number(deps.bobDurationField.value);
 
@@ -96,6 +97,7 @@ window.VerticalOverlaySharedSettings = (() => {
       zIndexBase: Number.isNaN(zIndexBase) ? 10 : zIndexBase,
       resizeMaxWidth: Math.max(1, Number.isNaN(resizeMaxWidth) ? 336 : resizeMaxWidth),
       resizeMaxHeight: Math.max(1, Number.isNaN(resizeMaxHeight) ? 540 : resizeMaxHeight),
+      displayImageScale: deps.clampNumber(displayImageScale, 1, 4, 1),
       frameColor: deps.normalizeHexColor(deps.frameColorField.value, "#f8fafc"),
       frameGlowColor: deps.normalizeHexColor(deps.frameGlowColorField.value, "#7dd3fc"),
       frameStrokeWidth: Math.max(0, Number(deps.frameStrokeWidthField.value ?? 2)),
@@ -135,6 +137,7 @@ window.VerticalOverlaySharedSettings = (() => {
     deps.zIndexBaseField.value = String(sharedSettings.zIndexBase ?? 10);
     deps.resizeMaxWidthField.value = String(sharedSettings.resizeMaxWidth ?? 336);
     deps.resizeMaxHeightField.value = String(sharedSettings.resizeMaxHeight ?? 540);
+    deps.displayImageScaleField.value = String(deps.clampNumber(sharedSettings.displayImageScale, 1, 4, 1));
     deps.frameColorField.value = deps.normalizeHexColor(sharedSettings.frameColor, "#f8fafc");
     deps.frameGlowColorField.value = deps.normalizeHexColor(sharedSettings.frameGlowColor, "#7dd3fc");
     deps.frameStrokeWidthField.value = String(sharedSettings.frameStrokeWidth ?? 2);
@@ -173,6 +176,7 @@ window.VerticalOverlaySharedSettings = (() => {
       zIndexBase: 10,
       resizeMaxWidth: 336,
       resizeMaxHeight: 540,
+      displayImageScale: 1,
       frameColor: "#f8fafc",
       frameGlowColor: "#7dd3fc",
       frameStrokeWidth: 2,

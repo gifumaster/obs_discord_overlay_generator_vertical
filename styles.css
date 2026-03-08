@@ -620,6 +620,12 @@ button:focus {
   color: rgba(236, 246, 255, 0.75);
 }
 
+.app-meta-center {
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(236, 246, 255, 0.75);
+}
+
 @keyframes previewImageBob {
   0% {
     background-position: center center;
