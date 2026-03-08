@@ -79,6 +79,7 @@ const {
   exportState: exportAppState,
   formatSavedAt,
   importState: importAppState,
+  markStateForDraftImages,
   readLocalDraft,
   scheduleLocalDraftSave
 } = window.VerticalOverlayStateIO;
@@ -630,7 +631,7 @@ loadJsonField.addEventListener("change", async (event) => {
 
   try {
     const text = await file.text();
-    importState(JSON.parse(text));
+    await importState(JSON.parse(text));
     setStatus("JSON設定を読み込みました。");
   } catch (error) {
     setStatus("JSONの読み込みに失敗しました。内容を確認してください。", "error", true);
@@ -649,10 +650,10 @@ copyButton.addEventListener("click", async () => {
   }
 });
 
-resumePreviousButton.addEventListener("click", () => {
+resumePreviousButton.addEventListener("click", async () => {
   const draft = readLocalDraft();
   if (draft?.state) {
-    importState(draft.state);
+    await importState(markStateForDraftImages(draft.state));
     setStatus("前回のローカル下書きを読み込みました。");
   }
   closeResumeModal();
